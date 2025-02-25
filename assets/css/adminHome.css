@@ -1,0 +1,187 @@
+/* Estilos generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Estilos de la barra de navegación */
+.top-menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: black;
+    color: white;
+    padding: 20px 20px;
+    width: 100vw;
+    height: 80px;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    padding-top: 80px;
+    box-sizing: border-box;
+}
+
+.logo img {
+    width: 50px;
+    height: 50px;
+}
+
+.menu-title {
+    margin: 0;
+    font-size: 1.5em;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.menu-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-new-user {
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin-right: 5px;
+}
+
+.btn-new-user:hover {
+    background-color: white;
+    color: black;
+}
+
+.profile-photo img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+/* Estilos para la lista de usuarios */
+.user-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    padding: 10px;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s;
+}
+
+.user-item:hover {
+    background-color: #e0e0e0;
+}
+
+.user-photo img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.user-info span {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.user-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+}
+
+.user-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.user-actions img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .top-menu {
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+        padding: 15px;
+    }
+
+    .menu-title {
+        position: static;
+        transform: none;
+    }
+
+    .menu-right {
+        flex-direction: row;
+        gap: 5px;
+    }
+
+    .btn-new-user {
+        width: auto;
+    }
+
+    .user-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .user-photo img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .user-info span {
+        font-size: 14px;
+    }
+
+    .user-actions {
+        margin-left: 0;
+        gap: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .menu-title {
+        font-size: 1.2em;
+    }
+
+    .profile-photo img {
+        width: 40px;
+        height: 40px;
+    }
+}
