@@ -3,30 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href=".\css\login.css">
     <title>Login</title>
+    <link rel="stylesheet" href="./css/login.css">
+    <script src="./js/login.js" defer></script>
 </head>
-
 <body>
-    <form class="login-form" action="login.php" method="post">
-    <p class="login-text">
-        <span class="fa-stack fa-lg">
-            <i class="fa fa-circle fa-stack-2x"></i>
-            <i class="fa fa-lock fa-stack-1x"></i>
-        </span>
-    </p>
-    <input type="email" name="email" class="login-username" required="true" placeholder="Email" />
-    <input type="password" name="password" class="login-password" required="true" placeholder="Password" />
-    <input type="submit" name="Login" value="Login" class="login-submit" />
-    </form>
-    <a href="#" class="login-forgot-pass">forgot password?</a>
-    <div class="underlay-photo"></div>
-    <div class="underlay-black"></div> 
+    <div class="login-container">
+        <form action="login.php" method="post" class="login-form">
+            <div class="logo-container">
+                <img src="./img/Logos/Logo.webp" alt="Logo">
+            </div>
+            <div class="input-container">
+                <img src="./img/Login/mail.webp" alt="Mail Icon">
+                <input type="email" name="email" required placeholder="Email">
+            </div>
+            <div class="input-container">
+                <img src="./img/Login/candado.webp" alt="Lock Icon">
+                <input type="password" name="password" required placeholder="Password">
+            </div>
+            <a href="#" class="forgot-password">Forgot password?</a>
+            <input type="submit" name="Login" value="Login" class="login-button">
+        </form>
+    </div>
 </body>
 </html>
+
 <?php
-
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
     $password = $_POST["password"];
