@@ -1,0 +1,73 @@
+<?php
+    session_start(); // Iniciar la sesión
+
+    // Verificar si hay un usuario en la sesión
+    if (!isset($_SESSION["user"])) {
+        header("Location: ../index.php");
+        exit();
+    }
+    
+    // Obtener los datos del usuario
+    $user_data = $_SESSION["user"];
+    
+    if ($user_data["tipoUsuario"] == "Admin") {
+        // Creamos la variable para ir modificando el titulo de la pagina
+        $titulo = "Usuarios";
+        $rol = "Admin";
+    } else {
+        $titulo = "Fichaje";
+        $rol = "User";
+    }
+
+?>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="../assets/css/home.css">
+    <link rel="stylesheet" href="../assets/css/userList.css">
+    <!-- Incluir Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="top-menu">
+        <div class="logo">
+            <img src="../assets/img/Home/Logo.webp" alt="Logo">
+        </div>
+        <h1 class="menu-title"><?php echo $titulo; ?></h1>
+        <div class="menu-right">
+            <?php
+                if ($user_data["tipoUsuario"] == "Admin") {
+                    echo "<button class='btn-new-user'>Nuevo Usuario</button>";
+                }
+            ?>
+            <div class="profile-photo">
+                <img src="../assets/img/Home/Perfil.webp" alt="Perfil">
+            </div>
+        </div>
+    </nav>
+    <main class="home-container">
+        <section class="left-panel">
+            <?php
+                if ($rol == "Admin") {
+                    echo "<button class='action-btn'>Gestion Usuarios</button>";
+                }
+            ?>
+            <button class="action-btn">Fichaje</button>
+            <button class="action-btn">Nominas</button>
+            <button class="action-btn">Calendario</button>
+        </section>
+        <section class="right-panel">
+            <?php
+                if ($rol == "Admin") {
+                    include_once "../includes/usersList.php";
+                } elseif ($rol == "User") {
+                    include_once "../includes/fichaje.php";
+                }
+            ?>
+        </section>
+    </main>
+</body>
+</html>

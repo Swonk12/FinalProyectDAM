@@ -24,22 +24,21 @@
                 foreach ($usuarios as $usuario) {
 
                     $nombre = $usuario['nombre'];
-                    $apellido = $usuario['apellido'];  
+                    $apellido = $usuario['apellido'];
+                    $email = $usuario['email'];
+                    $tipoUsuario = $usuario['tipoUsuario'];
 
-                    echo '<div class="user-item">';
-                    echo '  <div class="user-photo">';
-                    echo '    <img src="../assets/img/Home/Perfil.webp">';
-                    echo '  </div>';
-                    echo '  <div class="user-info">';
-                    echo '    <span>' . $nombre . ' ' . $apellido . '</span>';
-                    echo '  </div>';
-                    echo '  <div class="user-actions">';
-                    // Icono de la cruz (bi-x)
-                    echo '    <button class="btn-delete"><i class="bi bi-x-lg"></i></button>';
-                    // Icono de configuración (bi-gear-fill)
-                    echo '    <button class="btn-settings"><i class="bi bi-gear-fill"></i></button>';
-                    echo '  </div>';
-                    echo '</div>';
+
+                echo '<div class="user-item">';
+                echo '  <div class="user-photo"><img src="../assets/img/Home/Perfil.webp"></div>';
+                echo '  <div class="user-info"><span>' . $nombre . ' ' . $apellido . '</span></div>';
+                echo '  <div class="user-actions">';
+                echo '    <button class="btn-delete"><i class="bi bi-x-lg"></i></button>';
+                echo '    <button class="btn-settings" onclick="mostrarPopupUser(\'' . $nombre . '\', \'' . $apellido . '\', \'' . $email . '\', \'' . $tipoUsuario . '\')">';
+                echo '      <i class="bi bi-gear-fill"></i>';
+                echo '    </button>';
+                echo '  </div>';
+                echo '</div>';
                 }
             } else {
                 echo "No hay usuarios disponibles.";
@@ -50,3 +49,5 @@
         curl_close($ch);
         ?>
     </div>
+    <?php include 'popupUser.php'; ?>
+    <script src="../assets/js/userList.js"></script>

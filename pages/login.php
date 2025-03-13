@@ -80,13 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user_data = json_decode($response, true);
         session_start();
         $_SESSION["user"] = $user_data;
-        if ($user_data["tipoUsuario"] == "Admin") {
-            header("Location: ../pages/adminHome.php");
-            exit();
-        } else {
-            header("Location: ../pages/userHome.php");
-            exit();
-        }
+        header("Location: ../pages/home.php");
         exit();
     } else {
         // Mostrar el modal si las credenciales son incorrectas

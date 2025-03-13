@@ -1,0 +1,59 @@
+/* Espaciado entre elementos del pop-up */
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    padding: 25px;
+    width: 300px;
+}
+
+/* Contenedor del switch */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+/* Estilo base del switch */
+.switch {
+    position: relative;
+    width: 60px;
+    height: 28px;
+    background-color: #ccc;
+    border-radius: 34px;
+    cursor: pointer;
+    transition: background-color 0.4s;
+    display: flex;
+    align-items: center;
+    padding: 3px;
+}
+
+/* La parte móvil del switch */
+.slider {
+    width: 24px;
+    height: 24px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.4s;
+    transform: translateX(0); /* Posición inicial */
+}
+
+/* Estado de "Admin" (cuando el switch está activado) */
+.switch.admin {
+    background-color: #0078D7;
+}
+
+.switch.admin .slider {
+    transform: translateX(32px); /* Se mueve a la derecha */
+}
+
+/* Etiquetas del switch */
+.toggle-label {
+    font-size: 16px;
+    font-weight: bold;
+}
