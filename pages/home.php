@@ -28,26 +28,27 @@
     <title>Home</title>
     <link rel="stylesheet" href="../assets/css/home.css">
     <link rel="stylesheet" href="../assets/css/userList.css">
+    <link rel="stylesheet" href="../assets/css/newUser.css">
     <!-- Incluir Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
+    <!-- NAV DEL HOME -->
     <nav class="top-menu">
         <div class="logo">
             <img src="../assets/img/Home/Logo.webp" alt="Logo">
         </div>
         <h1 class="menu-title"><?php echo $titulo; ?></h1>
         <div class="menu-right">
-            <?php
-                if ($user_data["tipoUsuario"] == "Admin") {
-                    echo "<button class='btn-new-user'>Nuevo Usuario</button>";
-                }
-            ?>
+            <?php if ($rol == "Admin"): ?>
+                <button class="btn-create-user-hg45">Nuevo Usuario</button>
+            <?php endif; ?>
             <div class="profile-photo">
                 <img src="../assets/img/Home/Perfil.webp" alt="Perfil">
             </div>
         </div>
     </nav>
+
     <main class="home-container">
         <section class="left-panel">
             <?php
@@ -69,5 +70,12 @@
             ?>
         </section>
     </main>
+
+    <?php if ($rol == "Admin"): ?>
+        <?php include "../includes/newUser.php"; ?>
+    <?php endif; ?>
+
+    <script src="../assets/js/newUser.js"></script>
+
 </body>
 </html>

@@ -1,0 +1,128 @@
+/* Estilos generales del popup */
+.popup-box-lk90 {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    inset: 0; /* Reemplaza top, left, width, height */
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+/* Clase activa para mostrar el popup */
+.popup-box-lk90.active {
+    display: flex;
+    animation: fadeIn 0.3s ease-in-out; /* Animación suave */
+}
+
+/* Animación de aparición */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.popup-inner-vv44 {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    max-width: 90%; /* Evita que sea demasiado ancho en móviles */
+    text-align: center;
+    position: relative;
+}
+
+.close-popup-btn-xd66 {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Estilos para los inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Botón de envío */
+.submit-btn-hh23 {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Contenedor del switch */
+.switch-wrap-zz99 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+/* Estilos del switch */
+.switch-xf77 {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    margin: 0 10px;
+}
+
+.switch-xf77 input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider-vg55 {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 20px;
+}
+
+.slider-vg55:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+/* Cambio de estado del switch */
+input:checked + .slider-vg55 {
+    background-color: #007bff;
+}
+
+input:checked + .slider-vg55:before {
+    transform: translateX(20px);
+}
+
+/* Responsive mejorado */
+@media (max-width: 400px) {
+    .popup-inner-vv44 {
+        width: 90%;
+        padding: 15px;
+    }
+}

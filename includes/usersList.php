@@ -23,6 +23,7 @@
             if (!empty($usuarios)) {
                 foreach ($usuarios as $usuario) {
 
+                    $id = $usuario['idUsuario'];
                     $nombre = $usuario['nombre'];
                     $apellido = $usuario['apellido'];
                     $email = $usuario['email'];
@@ -33,7 +34,7 @@
                 echo '  <div class="user-photo"><img src="../assets/img/Home/Perfil.webp"></div>';
                 echo '  <div class="user-info"><span>' . $nombre . ' ' . $apellido . '</span></div>';
                 echo '  <div class="user-actions">';
-                echo '    <button class="btn-delete"><i class="bi bi-x-lg"></i></button>';
+                echo '    <button class="btn-delete" data-id="' . $id . '" onclick="eliminarUsuario(' . $id . ')"><i class="bi bi-x-lg"></i></button>';
                 echo '    <button class="btn-settings" onclick="mostrarPopupUser(\'' . $nombre . '\', \'' . $apellido . '\', \'' . $email . '\', \'' . $tipoUsuario . '\')">';
                 echo '      <i class="bi bi-gear-fill"></i>';
                 echo '    </button>';
