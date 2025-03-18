@@ -35,28 +35,36 @@ function cerrarPopupUser() {
     document.getElementById("popupUser").style.display = "none";
 }
 
-// Funcion para eliminar un usuario
-function eliminarUsuario(id) {
-    // Confirmar si el usuario está seguro de eliminar
-    if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
-        // Hacer la solicitud DELETE usando fetch
-        fetch('http://localhost:5064/api/Usuarios/' + id, {
+
+// Función para eliminar un usuario
+async function eliminarUsuario(id) {
+    if (!confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(`http://localhost:5064/api/Usuarios/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             }
-        })
-        .then(response => {
-            if (response.ok) {
-                alert('Usuario eliminado exitosamente');
-                // Eliminar el usuario del DOM
-                document.querySelector(`button[data-id='${id}']`).closest('.user-item').remove();
-            } else {
-                alert('Hubo un error al eliminar el usuario');
-            }
-        })
-        .catch(error => {
-            alert('Hubo un error en la solicitud: ' + error.message);
         });
+
+        console.log(`Respuesta del servidor: ${response.status}`);
+        
+        if (response.ok) {
+            console.log(`Intentando eliminar usuario con ID: ${id}`);
+            document.querySelector(`button[data-id='${id}']`)?.closest('.user-item')?.remove();
+        } else if (response.status === 404) {
+            alert('Error: El usuario no fue encontrado.');
+        } else {
+            const errorMessage = await response.text();
+            alert('Error al eliminar el usuario: ' + errorMessage);
+        }
+    } catch (error) {
+        console.error('Error en la solicitud:', error);
+        alert('Hubo un error en la solicitud: ' + error.message);
     }
 }
+
