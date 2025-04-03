@@ -44,6 +44,7 @@ $apiUrl = "http://localhost:5064/api/Fichajes";  // Cambia esta URL por la URL d
     <script>
         // Pasar el idUsuario desde PHP a JavaScript y asegurarnos de que se almacene en localStorage
         const idUsuario = <?php echo json_encode($idUsuario); ?>;
+        console.log("ID de usuario2:", idUsuario);  // Verificar el ID del usuario
 
         if (idUsuario) {
             localStorage.setItem("idUsuario", idUsuario);  // Guardar en localStorage
@@ -58,6 +59,7 @@ $apiUrl = "http://localhost:5064/api/Fichajes";  // Cambia esta URL por la URL d
 
             if (entrarBtn && idUsuario) {
                 entrarBtn.addEventListener("click", function () {
+                    console.log("ID de usuario:", idUsuario);  // Verificar el ID del usuario
                     ficharEntrada(idUsuario);
                 });
             }

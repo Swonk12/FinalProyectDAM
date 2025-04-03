@@ -1,5 +1,6 @@
-let tiempoEntrada = null; // Almacena el tiempo de entrada si ha fichado
-let tiempoFichaje = 0;  // Contador de tiempo en segundos
+let tiempoEntrada = null;
+let tiempoFichaje = 0;
+let enProceso = false;
 
 // Función para actualizar el contador
 function actualizarContador() {
@@ -8,131 +9,129 @@ function actualizarContador() {
         let minutos = Math.floor((tiempoFichaje % 3600) / 60);
         let segundos = tiempoFichaje % 60;
 
-        // Formateamos el tiempo
         document.getElementById('contador').innerText = 
             `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
         
         tiempoFichaje++;
-    }
+        localStorage.setItem("tiempoFichaje", tiempoFichaje);
+    }   
 }
+
 // Función para fichar entrada
 function ficharEntrada(idUsuario) {
-    const usuarioId = Number(idUsuario);
+    if (enProceso) return;
+    enProceso = true;
 
+    console.log("🔹 Intentando fichar entrada", idUsuario);
+    const usuarioId = Number(idUsuario);
     if (!usuarioId) {
-        console.error("Error: idUsuario no válido.");
+        console.error("❌ ID de usuario inválido.");
+        enProceso = false;
         return;
     }
 
     fetch(`http://localhost:5064/api/Fichajes/entrada`, { 
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuarioId) 
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => { 
-                throw new Error(`Error HTTP: ${response.status} - ${err}`); 
-            });
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        console.log("Respuesta de la API:", data);
+        console.log("✅ Respuesta API:", data);
         if (data.mensaje === "Entrada fichada correctamente.") {
-            // Guardamos el estado en localStorage
             localStorage.setItem("fichajeActivo", "true");
-
-            // Deshabilitamos el botón "Entrar" y habilitamos "Salir"
             document.getElementById("entrarBtn").disabled = true;
             document.getElementById("salirBtn").disabled = false;
-
-            // Activamos el contador
+            
             tiempoEntrada = Date.now();
-            tiempoFichaje = 0;
+            localStorage.setItem("tiempoEntrada", tiempoEntrada);
+            
+            // Si la tabla estaba vacía, aseguramos iniciar desde 0
+            tiempoFichaje = parseInt(localStorage.getItem("tiempoFichaje")) || 0;
+            
             if (!window.contadorActivo) {
                 window.contadorActivo = setInterval(actualizarContador, 1000);
             }
-        } else {
-            console.error("Error al fichar entrada:", data.mensaje);
         }
     })
-    .catch(error => {
-        console.error("Error en la solicitud:", error);
-    });
+    .catch(error => console.error("❌ Error en la API:", error))
+    .finally(() => enProceso = false);
 }
 
 // Función para fichar salida
 function ficharSalida(idUsuario) {
+    console.log("🔹 Intentando fichar salida", idUsuario);
     const usuarioId = Number(idUsuario);
-
     if (!usuarioId) {
-        console.error("Error: idUsuario no válido.");
+        console.error("❌ ID de usuario inválido.");
         return;
     }
 
     fetch(`http://localhost:5064/api/Fichajes/salida`, { 
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuarioId) 
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => { 
-                throw new Error(`Error HTTP: ${response.status} - ${err}`); 
-            });
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        console.log("Respuesta de la API:", data);
+        console.log("✅ Respuesta API:", data);
         if (data.mensaje === "Salida fichada correctamente.") {
-            // Eliminamos el estado de fichaje en localStorage
-            localStorage.removeItem("fichajeActivo");
-
-            // Habilitamos "Entrar" y deshabilitamos "Salir"
+            localStorage.setItem("fichajeActivo", "false");
             document.getElementById("entrarBtn").disabled = false;
             document.getElementById("salirBtn").disabled = true;
 
-            // Detenemos el contador
             clearInterval(window.contadorActivo);
             window.contadorActivo = null;
-        } else {
-            console.error("Error al fichar salida:", data.mensaje);
+
+            localStorage.setItem("tiempoFichaje", tiempoFichaje);
         }
     })
-    .catch(error => {
-        console.error("Error en la solicitud:", error);
-    });
+    .catch(error => console.error("❌ Error en la API:", error));
 }
 
-// Al cargar la página, restaurar estado del botón según el fichaje previo
+// Restaurar estado al cargar la página
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("🚀 Script ejecutado correctamente");
+
     const entrarBtn = document.getElementById("entrarBtn");
     const salirBtn = document.getElementById("salirBtn");
+
+    const fichajeActivo = localStorage.getItem("fichajeActivo") === "true";
+    const tiempoGuardado = localStorage.getItem("tiempoEntrada");
+    let tiempoPrevio = parseInt(localStorage.getItem("tiempoFichaje")) || 0;
     
-    if (localStorage.getItem("fichajeActivo") === "true") {
-        // Si ya fichó entrada, deshabilitar "Entrar" y habilitar "Salir"
+    if (!tiempoGuardado) {
+        console.warn("⚠️ No hay datos previos de fichaje. La base de datos puede estar vacía.");
+        tiempoFichaje = 0;
+        localStorage.setItem("tiempoFichaje", "0");
+    }
+
+    if (fichajeActivo) {
         entrarBtn.disabled = true;
         salirBtn.disabled = false;
+
+        if (tiempoGuardado) {
+            tiempoEntrada = parseInt(tiempoGuardado, 10);
+            tiempoFichaje = Math.floor((Date.now() - tiempoEntrada) / 1000) + tiempoPrevio;
+        }
+
+        if (!window.contadorActivo) {
+            window.contadorActivo = setInterval(actualizarContador, 1000);
+        }
     } else {
-        // Si no ha fichado entrada, habilitar "Entrar" y deshabilitar "Salir"
         entrarBtn.disabled = false;
         salirBtn.disabled = true;
+        
+        // Mostrar el último tiempo fichado si no está trabajando
+        let horas = Math.floor(tiempoPrevio / 3600);
+        let minutos = Math.floor((tiempoPrevio % 3600) / 60);
+        let segundos = tiempoPrevio % 60;
+        document.getElementById('contador').innerText = 
+            `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
     }
-});
 
+    entrarBtn.addEventListener("click", () => ficharEntrada(idUsuario));
+    salirBtn.addEventListener("click", () => ficharSalida(idUsuario));
 
-
-document.getElementById('salirBtn').addEventListener('click', function() {
-    const idUsuario = localStorage.getItem('idUsuario'); // Obtener idUsuario desde localStorage
-    if (idUsuario) {
-        ficharSalida(idUsuario);
-    } else {
-        console.error("El idUsuario no está disponible");
-    }
+    console.log("🔍 Intervalo activo:", window.contadorActivo);
 });

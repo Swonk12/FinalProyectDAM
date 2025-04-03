@@ -1,24 +1,23 @@
 <?php
-    session_start(); // Iniciar la sesión
+session_start(); // Iniciar la sesión
 
-    // Verificar si hay un usuario en la sesión
-    if (!isset($_SESSION["user"])) {
-        header("Location: ../index.php");
-        exit();
-    }
-    
-    // Obtener los datos del usuario
-    $user_data = $_SESSION["user"];
-    
-    if ($user_data["tipoUsuario"] == "Admin") {
-        // Creamos la variable para ir modificando el titulo de la pagina
-        $titulo = "Usuarios";
-        $rol = "Admin";
-    } else {
-        $titulo = "Fichaje";
-        $rol = "User";
-    }
+// Verificar si hay un usuario en la sesión
+if (!isset($_SESSION["user"])) {
+    header("Location: ../index.php");
+    exit();
+}
 
+// Obtener los datos del usuario
+$user_data = $_SESSION["user"];
+
+if ($user_data["tipoUsuario"] == "Admin") {
+    // Creamos la variable para ir modificando el titulo de la pagina
+    $titulo = "Usuarios";
+    $rol = "Admin";
+} else {
+    $titulo = "Fichaje";
+    $rol = "User";
+}
 ?>
 
 <html lang="en">
@@ -51,16 +50,15 @@
 
     <main class="home-container">
         <section class="left-panel">
-            <?php
-                if ($rol == "Admin") {
-                    echo "<button class='action-btn'>Gestion Usuarios</button>";
-                }
-            ?>
-            <button class="action-btn">Fichaje</button>
-            <button class="action-btn">Nominas</button>
-            <button class="action-btn">Calendario</button>
+            <?php if ($rol == "Admin") { ?>
+                <button class='action-btn' data-page="usersList.php">Gestion Usuarios</button>
+            <?php } ?>
+            
+            <button class="action-btn" data-page="fichaje.php">Fichaje</button>
+            <button class="action-btn" data-page="nominas.php">Nominas</button>
+            <button class="action-btn" data-page="calendario.php">Calendario</button>
         </section>
-        <section class="right-panel">
+        <section class="right-panel" id="content-panel">
             <?php
                 if ($rol == "Admin") {
                     include_once "../includes/usersList.php";
@@ -76,6 +74,26 @@
     <?php endif; ?>
 
     <script src="../assets/js/newUser.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Cargar contenido con AJAX cuando se hace clic en los botones
+            document.querySelectorAll(".action-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    const page = this.getAttribute("data-page"); // Obtiene el nombre del archivo PHP
+                    const panel = document.getElementById("content-panel");
+
+                    // Hacemos la petición AJAX
+                    fetch(`../includes/${page}`)
+                        .then(response => response.text())
+                        .then(html => {
+                            panel.innerHTML = html; // Insertamos el contenido en el panel derecho
+                        })
+                        .catch(error => console.error("Error al cargar el contenido:", error));
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>
