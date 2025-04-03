@@ -1,21 +1,24 @@
 let tiempoEntrada = null;
 let tiempoFichaje = 0;
 let enProceso = false;
+let contadorActivo = null;
 
 // Función para actualizar el contador
 function actualizarContador() {
-    if (tiempoEntrada !== null) {
-        let horas = Math.floor(tiempoFichaje / 3600);
-        let minutos = Math.floor((tiempoFichaje % 3600) / 60);
-        let segundos = tiempoFichaje % 60;
+    let tiempoMostrar = Math.floor(tiempoFichaje); // Redondear tiempo total a segundos
 
-        document.getElementById('contador').innerText = 
-            `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
-        
-        tiempoFichaje++;
-        localStorage.setItem("tiempoFichaje", tiempoFichaje);
-    }   
+    if (tiempoEntrada !== null) {
+        tiempoMostrar += Math.floor((Date.now() - tiempoEntrada) / 1000);
+    }
+
+    let horas = Math.floor(tiempoMostrar / 3600);
+    let minutos = Math.floor((tiempoMostrar % 3600) / 60);
+    let segundos = Math.floor(tiempoMostrar % 60); // Eliminar decimales
+
+    document.getElementById('contador').innerText =
+        `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
 }
+
 
 // Función para fichar entrada
 function ficharEntrada(idUsuario) {
@@ -46,9 +49,10 @@ function ficharEntrada(idUsuario) {
             tiempoEntrada = Date.now();
             localStorage.setItem("tiempoEntrada", tiempoEntrada);
             
-            // Si la tabla estaba vacía, aseguramos iniciar desde 0
-            tiempoFichaje = parseInt(localStorage.getItem("tiempoFichaje")) || 0;
-            
+            // 🔹 No reiniciar, sino seguir con el tiempo acumulado
+            let tiempoGuardado = parseInt(localStorage.getItem("tiempoFichaje")) || 0;
+            tiempoFichaje = tiempoGuardado; // Recupera tiempo trabajado antes
+
             if (!window.contadorActivo) {
                 window.contadorActivo = setInterval(actualizarContador, 1000);
             }
@@ -57,6 +61,7 @@ function ficharEntrada(idUsuario) {
     .catch(error => console.error("❌ Error en la API:", error))
     .finally(() => enProceso = false);
 }
+
 
 // Función para fichar salida
 function ficharSalida(idUsuario) {
@@ -80,58 +85,72 @@ function ficharSalida(idUsuario) {
             document.getElementById("entrarBtn").disabled = false;
             document.getElementById("salirBtn").disabled = true;
 
-            clearInterval(window.contadorActivo);
-            window.contadorActivo = null;
+            clearInterval(contadorActivo);
+            contadorActivo = null;
 
+            // Guardar tiempo total trabajado en localStorage
+            tiempoFichaje = tiempoFichaje + Math.floor((Date.now() - tiempoEntrada) / 1000);
             localStorage.setItem("tiempoFichaje", tiempoFichaje);
+            tiempoEntrada = null; // Se resetea la entrada
         }
     })
     .catch(error => console.error("❌ Error en la API:", error));
 }
 
 // Restaurar estado al cargar la página
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("🚀 Script ejecutado correctamente");
+document.addEventListener("DOMContentLoaded", async function () {
+    console.log("🚀 Cargando datos del usuario...");
 
-    const entrarBtn = document.getElementById("entrarBtn");
-    const salirBtn = document.getElementById("salirBtn");
+    const idUsuario = localStorage.getItem("idUsuario");
+    const fechaHoy = new Date().toISOString().split('T')[0];
 
-    const fichajeActivo = localStorage.getItem("fichajeActivo") === "true";
-    const tiempoGuardado = localStorage.getItem("tiempoEntrada");
-    let tiempoPrevio = parseInt(localStorage.getItem("tiempoFichaje")) || 0;
-    
-    if (!tiempoGuardado) {
-        console.warn("⚠️ No hay datos previos de fichaje. La base de datos puede estar vacía.");
-        tiempoFichaje = 0;
-        localStorage.setItem("tiempoFichaje", "0");
+    if (!idUsuario) {
+        console.error("❌ No se encontró ID de usuario en localStorage.");
+        return;
     }
 
-    if (fichajeActivo) {
-        entrarBtn.disabled = true;
-        salirBtn.disabled = false;
+    try {
+        const response = await fetch(`http://localhost:5064/api/Fichajes/${idUsuario}/${fechaHoy}`);
+        const fichajes = await response.json();
+        console.log("✅ Datos de fichajes obtenidos:", fichajes);
 
-        if (tiempoGuardado) {
-            tiempoEntrada = parseInt(tiempoGuardado, 10);
-            tiempoFichaje = Math.floor((Date.now() - tiempoEntrada) / 1000) + tiempoPrevio;
+        if (!Array.isArray(fichajes) || fichajes.length === 0) {
+            console.warn("⚠️ No hay registros de fichaje para hoy.");
+            return;
         }
 
-        if (!window.contadorActivo) {
-            window.contadorActivo = setInterval(actualizarContador, 1000);
+        let tiempoTotalSegundos = 0;
+        let ultimoFichajeActivo = null;
+
+        fichajes.forEach(fichaje => {
+            const horaEntrada = new Date(fichaje.horaEntrada).getTime();
+            const horaSalida = fichaje.horaSalida ? new Date(fichaje.horaSalida).getTime() : null;
+
+            if (horaSalida) {
+                tiempoTotalSegundos += (horaSalida - horaEntrada) / 1000;
+            } else {
+                ultimoFichajeActivo = horaEntrada;
+            }
+        });
+
+        tiempoFichaje = tiempoTotalSegundos;
+        localStorage.setItem("tiempoFichaje", tiempoFichaje);
+
+        if (ultimoFichajeActivo) {
+            tiempoEntrada = ultimoFichajeActivo;
+            localStorage.setItem("tiempoEntrada", tiempoEntrada);
         }
-    } else {
-        entrarBtn.disabled = false;
-        salirBtn.disabled = true;
-        
-        // Mostrar el último tiempo fichado si no está trabajando
-        let horas = Math.floor(tiempoPrevio / 3600);
-        let minutos = Math.floor((tiempoPrevio % 3600) / 60);
-        let segundos = tiempoPrevio % 60;
-        document.getElementById('contador').innerText = 
-            `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+
+        actualizarContador();
+
+        if (ultimoFichajeActivo) {
+            console.log("⏳ El usuario sigue trabajando. Iniciando contador...");
+            contadorActivo = setInterval(actualizarContador, 1000);
+        } else {
+            console.log("✅ Usuario ya ha terminado su jornada.");
+        }
+
+    } catch (error) {
+        console.error("❌ Error al obtener los fichajes:", error);
     }
-
-    entrarBtn.addEventListener("click", () => ficharEntrada(idUsuario));
-    salirBtn.addEventListener("click", () => ficharSalida(idUsuario));
-
-    console.log("🔍 Intervalo activo:", window.contadorActivo);
 });
