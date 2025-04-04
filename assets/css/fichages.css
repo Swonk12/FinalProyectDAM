@@ -12,54 +12,128 @@ body {
     align-items: center;
     height: 100vh;
     flex-direction: column;
+    width: 100%;
 }
 
+/* 🔹 Contenedor principal ahora centrado y ancho completo */
 .container {
+    width: 90%; /* Se expande casi completamente */
+    max-width: 1200px; /* Máximo tamaño en pantallas grandes */
     text-align: center;
-    padding: 20px;
+    padding: 30px;
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
+/* 🔹 Icono de usuario centrado */
 .icon-container {
     margin-bottom: 20px;
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
 }
 
 .persona-icon {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
 }
 
+/* 🔹 Estilos del contador centrado */
 .contador {
-    font-size: 30px;
+    font-size: 35px;
     font-weight: bold;
     margin: 20px 0;
 }
 
+/* 🔹 Botones centrados con espacio entre ellos */
 .botones {
     margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    justify-content: center; /* Centra los botones */
 }
 
 .btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
+    width: 300px;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 8px;
     cursor: pointer;
-    margin: 5px;
 }
 
 .verde {
     background-color: #4CAF50;
+    color: white;
 }
 
 .rojo {
     background-color: #f44336;
+    color: white;
 }
 
 .btn:active {
     transform: scale(0.98);
+}
+
+/* 🔹 Listado de registros ahora ocupa toda la parte derecha */
+.registro-lista {
+    width: 100%;
+    max-width: 100%; /* Ocupará todo el ancho */
+    margin-top: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+/* 🔹 Título del listado */
+.registro-lista h3 {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 22px;
+    color: #333;
+}
+
+/* 🔹 Cada registro */
+.registro {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* 🔹 Entrada y salida */
+.entrada {
+    background: #d4f8d4;
+    color: #2e7d32;
+}
+
+.salida {
+    background: #ffdada;
+    color: #d32f2f;
+}
+
+/* 🔹 Estilo para el tiempo cursado */
+.tiempo-cursado {
+    font-size: 16px;
+    font-weight: normal;
+    color: #555;
+}
+
+/* 🔹 Para que la lista de registros llegue a la derecha */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Alinea todo al centro horizontalmente */
 }

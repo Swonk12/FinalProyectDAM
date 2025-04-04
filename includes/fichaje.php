@@ -37,29 +37,31 @@ $apiUrl = "http://localhost:5064/api/Fichajes";  // Cambia esta URL por la URL d
             <button id="entrarBtn" class="btn verde">Entrar</button>
             <button id="salirBtn" class="btn rojo">Salir</button>
         </div>
+
+        <div id="registros" class="registro-lista">
+            <h3>Registros de Hoy</h3>
+            <div id="listaFichajes"></div>
+        </div>
     </div>
 
     <script src="../assets/js/fichages.js"></script>
 
     <script>
-        // Pasar el idUsuario desde PHP a JavaScript y asegurarnos de que se almacene en localStorage
         const idUsuario = <?php echo json_encode($idUsuario); ?>;
-        console.log("ID de usuario2:", idUsuario);  // Verificar el ID del usuario
+        console.log("ID de usuario:", idUsuario);
 
         if (idUsuario) {
-            localStorage.setItem("idUsuario", idUsuario);  // Guardar en localStorage
+            localStorage.setItem("idUsuario", idUsuario);
         } else {
             console.error("Error: idUsuario no disponible.");
         }
 
-        // Añadir los event listeners para los botones solo si idUsuario es válido
         document.addEventListener("DOMContentLoaded", function () {
             const entrarBtn = document.getElementById("entrarBtn");
             const salirBtn = document.getElementById("salirBtn");
 
             if (entrarBtn && idUsuario) {
                 entrarBtn.addEventListener("click", function () {
-                    console.log("ID de usuario:", idUsuario);  // Verificar el ID del usuario
                     ficharEntrada(idUsuario);
                 });
             }
@@ -69,6 +71,8 @@ $apiUrl = "http://localhost:5064/api/Fichajes";  // Cambia esta URL por la URL d
                     ficharSalida(idUsuario);
                 });
             }
+
+            cargarFichajes(idUsuario);  // Cargar los registros del día al iniciar
         });
     </script>
 </body>
