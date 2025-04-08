@@ -7,8 +7,33 @@ if (!isset($_SESSION["user"])) {
 
 $user_data = $_SESSION["user"];
 $rol = $user_data["tipoUsuario"];
-$titulo = ($rol == "Admin") ? "Usuarios" : "Fichaje";
+$nombre = $user_data["nombre"];
+$apellido = $user_data["apellido"];
+
+// Definimos página por defecto según el rol
+$defaultPage = ($rol == "Admin") ? "usersList.php" : "fichaje.php";
+
+// Páginas permitidas por rol
+$pagesByRole = [
+    "Admin" => ["usersList.php", "fichaje.php", "nominasAdmin.php", "calendario.php"],
+    "Usuario" => ["fichaje.php", "nominasUser.php", "calendario.php"]
+];
+
+$allowedPages = $pagesByRole[$rol] ?? [];
+$page = isset($_GET["page"]) && in_array($_GET["page"], $allowedPages) ? $_GET["page"] : $defaultPage;
+
+// Asignar título según la página activa
+$titulosPorPagina = [
+    "usersList.php"     => "Usuarios",
+    "fichaje.php"       => "Fichaje",
+    "nominasAdmin.php"  => "Subir Nóminas",
+    "nominasUser.php"   => "Consultar Nóminas",
+    "calendario.php"    => "Calendario"
+];
+
+$titulo = $titulosPorPagina[$page] ?? "Inicio";
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -30,7 +55,9 @@ $titulo = ($rol == "Admin") ? "Usuarios" : "Fichaje";
         </div>
         <h1 class="menu-title"><?= $titulo ?></h1>
         <div class="menu-right">
-            <?php if ($rol == "Admin"): ?>
+        <?php
+            echo "<p>" . $nombre . " " . $apellido . "</p>"; 
+            if ($rol == "Admin" && $page === "usersList.php"): ?>
                 <button class="btn-create-user-hg45">Nuevo Usuario</button>
             <?php endif; ?>
             <div class="profile-photo">
@@ -45,19 +72,22 @@ $titulo = ($rol == "Admin") ? "Usuarios" : "Fichaje";
             <?php if ($rol == "Admin"): ?>
                 <button class='action-btn' data-page="usersList.php">Gestion Usuarios</button>
             <?php endif; ?>
+
             <button class="action-btn" data-page="fichaje.php">Fichaje</button>
-            <button class="action-btn" data-page="nominas.php">Nominas</button>
+
+            <?php if ($rol == "Usuario"): ?>
+                <button class='action-btn' data-page="nominasUser.php">Consultar Nominas</button>
+            <?php endif; ?>
+
+            <?php if ($rol == "Admin"): ?>
+                <button class='action-btn' data-page="nominasAdmin.php">Subir Nominas</button>
+            <?php endif; ?>
+
             <button class="action-btn" data-page="calendario.php">Calendario</button>
         </section>
 
         <section class="right-panel" id="content-panel">
-            <?php
-                if ($rol == "Admin") {
-                    include_once "../includes/usersList.php";
-                } else {
-                    include_once "../includes/fichaje.php";
-                }
-            ?>
+            <?php include_once "../includes/" . $page; ?>
         </section>
     </main>
 
@@ -69,56 +99,12 @@ $titulo = ($rol == "Admin") ? "Usuarios" : "Fichaje";
     <script src="../assets/js/newUser.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const panel = document.getElementById("content-panel");
-
-            // Cargar contenido dinámico
             document.querySelectorAll(".action-btn").forEach(button => {
                 button.addEventListener("click", function () {
                     const page = this.getAttribute("data-page");
-
-                    fetch(`../includes/${page}`)
-                        .then(response => {
-                            if (!response.ok) throw new Error("HTTP error " + response.status);
-                            return response.text();
-                        })
-                        .then(html => {
-                            panel.innerHTML = html;
-                            reinitializeScripts(page); // Reiniciar scripts tras cargar el contenido
-                        })
-                        .catch(error => console.error("Error al cargar el contenido:", error));
+                    window.location.href = `home.php?page=${page}`;
                 });
             });
-
-            // Función que vuelve a ejecutar JS dependiendo de la página
-            function reinitializeScripts(page) {
-                switch (page) {
-                    case "fichaje.php":
-                        loadScript("../assets/js/fichages.js");
-                        break;
-                    case "usersList.php":
-                        loadScript("../assets/js/usersList.js");
-                        break;
-                    case "nominas.php":
-                        loadScript("../assets/js/nominas.js");
-                        break;
-                    case "calendario.php":
-                        loadScript("../assets/js/calendario.js");
-                        break;
-                }
-            }
-
-            function loadScript(src) {
-                if (document.querySelector(`script[src="${src}"]`)) {
-                    console.log(`${src} ya fue cargado.`);
-                    return; // Evita recargarlo
-                }
-
-                const script = document.createElement("script");
-                script.src = src;
-                script.defer = true;
-                document.body.appendChild(script);
-            }
-
         });
     </script>
 </body>

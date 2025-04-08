@@ -6,6 +6,6 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>NOMINAS</h1>
+    <h1>NOMINAS ADMIN</h1>
 </body>
 </html>
