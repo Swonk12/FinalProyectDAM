@@ -1,7 +1,7 @@
-let tiempoEntrada = null;
-let tiempoFichaje = 0;
-let enProceso = false;
-let contadorActivo = null;
+var tiempoEntrada = null;
+var tiempoFichaje = 0;
+var enProceso = false;
+var contadorActivo = null;
 
 
 // Función para actualizar el contador general
