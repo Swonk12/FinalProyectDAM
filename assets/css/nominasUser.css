@@ -1,0 +1,84 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f0f2f5;
+    color: #333;
+}
+
+.container {
+    max-width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.titulo {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+
+.lista-nominas {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.nomina-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+
+
+.nomina-texto {
+    display: flex;
+    flex-direction: column;
+}
+
+.nomina-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.nomina-header {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #34495e;
+}
+
+.nomina-fecha {
+    font-size: 0.9em;
+    color: #7f8c8d;
+    margin-top: 5px;
+}
+
+.descarga-icono {
+    font-size: 1.6em;
+    color: #2980b9;
+    text-decoration: none;
+    margin-left: 20px;
+    transition: color 0.2s ease;
+}
+
+.descarga-icono:hover {
+    color: #1c5980;
+}
+/* Asegura márgenes en móviles */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .nomina-item {
+        padding: 16px;
+    }
+}
+

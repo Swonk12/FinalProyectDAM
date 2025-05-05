@@ -71,6 +71,10 @@
     max-width: 350px;
 }
 
+.btn{
+    margin-top: 2%;
+}
+
 .upload-button:hover {
     background-color: #333;
 }
