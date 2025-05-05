@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderFileList() {
         fileList.innerHTML = "";
-        files.forEach((file, index) => {
+        files.forEach((file) => {
             const li = document.createElement("li");
             li.textContent = `${file.name}`;
             fileList.appendChild(li);
@@ -44,10 +44,45 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     uploadButton.addEventListener("click", () => {
-        // Guardamos Archivos en Local
-        
+        const formData = new FormData();
 
-        // Guardamos Archivos en la Base de Datos (API)
-        console.log("Ahora envia", files);
+        files.forEach((file) => {
+            formData.append('nominas[]', file);
+        });
+
+        fetch('../api/uploadNominas.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(result => {
+            let errores = [];
+            let exitos = [];
+
+            result.forEach(entry => {
+                if (entry.status === "success") {
+                    exitos.push(entry.file);
+                } else if (entry.status === "formato_invalido") {
+                    errores.push(`${entry.file} - Formato inválido`);
+                } else {
+                    errores.push(`${entry.file} - Error al guardar`);
+                }
+            });
+
+            if (exitos.length > 0) {
+                alert(`Archivos subidos correctamente:\n- ${exitos.join('\n- ')}`);
+            }
+
+            if (errores.length > 0) {
+                alert(`Algunos archivos no se subieron:\n- ${errores.join('\n- ')}`);
+            }
+
+            files = [];
+            renderFileList();
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Hubo un error al subir los archivos");
+        });
     });
 });
