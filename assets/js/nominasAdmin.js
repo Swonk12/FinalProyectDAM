@@ -42,31 +42,22 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    async function obtenerIdUsuario(nombre, apellido) {
-        try {
-            const response = await fetch("http://localhost:5064/api/Usuarios");
-            const usuarios = await response.json();
-
-            const usuario = usuarios.find(u =>
-                u.nombre.toLowerCase() === nombre.toLowerCase() &&
-                u.apellido.toLowerCase() === apellido.toLowerCase()
-            );
-
-            return usuario ? usuario.idUsuario : null;
-        } catch (error) {
-            console.error("Error al obtener usuarios:", error);
-            return null;
-        }
-    }
-
     uploadButton.addEventListener("click", async () => {
         let errores = [];
         let exitos = [];
 
+        // Obtener todos los usuarios de la API una vez
+        const usuarios = await fetch("http://localhost:5064/api/Usuarios")
+            .then(res => res.json())
+            .catch(err => {
+                console.error("❌ Error al obtener usuarios:", err);
+                return [];
+            });
+
         for (let file of files) {
             const nombreArchivo = file.name;
 
-            // Validar formato
+            // Validar formato: NombreApellido_MM_AAAA.pdf
             const formatoValido = /^[a-zA-Z]+[a-zA-Z]*_[0-9]{1,2}_[0-9]{4}\.pdf$/;
             if (!formatoValido.test(nombreArchivo)) {
                 errores.push(`${nombreArchivo} - Formato inválido`);
@@ -75,24 +66,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const [nombreCompleto, mes, anioConExtension] = nombreArchivo.split("_");
             const anio = anioConExtension.replace(".pdf", "");
+            const mesAnio = `${mes.padStart(2, "0")}-${anio}`;
+            const nombreSinExtension = nombreArchivo.replace(".pdf", "");
 
-            const nombreSeparado = nombreCompleto.replace(/([a-z])([A-Z])/g, "$1 $2");
-            const [nombre, apellido] = nombreSeparado.split(" ");
+            // Buscar usuario que coincida
+            let idUsuario = null;
+            for (const usuario of usuarios) {
+                const combinado = (usuario.nombre + usuario.apellido).toLowerCase();
+                if (combinado === nombreCompleto.toLowerCase()) {
+                    idUsuario = usuario.idUsuario;
+                    break;
+                }
+            }
 
-            const idUsuario = await obtenerIdUsuario(nombre, apellido);
             if (!idUsuario) {
                 errores.push(`${nombreArchivo} - Usuario no encontrado`);
                 continue;
             }
 
+            // Subir archivo al servidor
             const formData = new FormData();
             formData.append("nominas[]", file);
-            formData.append("idUsuario", idUsuario);
 
             try {
                 const response = await fetch("../../includes/uploadNominas.php", {
                     method: "POST",
-                    body: formData
+                    body: formData,
                 });
 
                 const text = await response.text();
@@ -100,51 +99,49 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const result = JSON.parse(text);
 
-                for (let entry of result) {
-                    if (entry.status === "success") {
-                        exitos.push(entry.file);
-
-                        // Construir datos para la API .NET
-                        const mesAnio = `${mes.padStart(2, "0")}-${anio}`;
-                        const nombreArchivoSinExtension = entry.file.replace(".pdf", "");
-                        const fechaSubida = new Date().toISOString();
-
-                        const nuevaNomina = {
-                            idNomina: 0,
-                            idUsuario: idUsuario,
-                            mesAnio: mesAnio,
-                            nombreArchivo: nombreArchivoSinExtension,
-                            rutaArchivo: `../assets/uploads/${nombreArchivoSinExtension}`,
-                            fechaSubida: fechaSubida
-                        };
-
-                        // Llamada a la API .NET
-                        const apiResponse = await fetch("http://localhost:5064/api/Nominas", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify(nuevaNomina)
-                        });
-
-                        if (!apiResponse.ok) {
-                            errores.push(`${entry.file} - Fallo al guardar en la base de datos`);
-                        }
-                    } else if (entry.status === "formato_invalido") {
-                        errores.push(`${entry.file} - Formato inválido`);
-                    } else if (entry.status === "usuario_no_encontrado") {
-                        errores.push(`${entry.file} - Usuario no encontrado`);
-                    } else {
-                        errores.push(`${entry.file} - Error al guardar`);
-                    }
+                if (!Array.isArray(result) || result.length === 0) {
+                    errores.push(`${nombreArchivo} - Respuesta inesperada del servidor`);
+                    continue;
                 }
 
+                const estado = result[0].status;
+
+                if (estado === "success") {
+                    // Subir a la base de datos vía API
+                    const nominaData = {
+                        idNomina: 0,
+                        idUsuario: idUsuario,
+                        mesAnio: mesAnio,
+                        nombreArchivo: nombreSinExtension,
+                        rutaArchivo: `../assets/uploads/${nombreSinExtension}`,
+                        fechaSubida: new Date().toISOString()
+                    };
+
+                    const apiResponse = await fetch("http://localhost:5064/api/Nominas", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(nominaData)
+                    });
+
+                    if (apiResponse.ok) {
+                        exitos.push(nombreArchivo);
+                    } else {
+                        errores.push(`${nombreArchivo} - Error al insertar en la base de datos`);
+                    }
+                } else if (estado === "formato_invalido") {
+                    errores.push(`${nombreArchivo} - Formato inválido`);
+                } else {
+                    errores.push(`${nombreArchivo} - Error al guardar el archivo`);
+                }
             } catch (error) {
-                console.error("Error durante el proceso de subida o API:", error);
+                console.error("❌ Error al procesar archivo:", error);
                 errores.push(`${nombreArchivo} - Error inesperado`);
             }
         }
 
+        // Mostrar resultados
         if (exitos.length > 0) {
             alert(`✅ Archivos subidos correctamente:\n- ${exitos.join("\n- ")}`);
         }
