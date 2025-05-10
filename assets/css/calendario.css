@@ -1,0 +1,54 @@
+#calendar-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  
+  /* Calendario responsive y sin scroll vertical */
+  #calendar {
+    width: 100%;
+  }
+  
+  /* Asegura que el calendario crezca automáticamente */
+  .fc .fc-scrollgrid-section-body {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  
+  /* Reduce el tamaño real de celdas */
+  .fc td, .fc th {
+    padding: 0.6em 0.3em !important;
+    font-size: 0.95rem;
+  }
+  
+  /* Ajuste de altura real de filas */
+  .fc-daygrid-day-frame {
+    min-height: 60px;
+  }
+  
+  /* Contador */
+  #vacation-counter {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 20px;
+    font-size: 1.1rem;
+  }
+  
+  /* Responsive para móviles */
+  @media (max-width: 768px) {
+    .fc td, .fc th {
+      padding: 0.5em 0.2em !important;
+      font-size: 0.85rem;
+    }
+  
+    .fc-daygrid-day-frame {
+      min-height: 50px;
+    }
+  
+    #vacation-counter {
+      font-size: 1rem;
+    }
+  }
+  
