@@ -6,15 +6,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'es',
-        height: 'auto',
+        contentHeight: 'auto',
+        expandRows: true,
         selectable: true,
 
         select: async function (info) {
             const fecha = info.startStr;
 
-            // Verificar si ya está seleccionada
             if (!selectedDates.includes(fecha)) {
-                // Comprobar límite de 28 días
                 const response = await fetch(`http://localhost:5064/api/Vacaciones/usuario/${USER_ID}`);
                 const vacaciones = await response.json();
                 if (vacaciones.length >= 28) {
@@ -29,8 +28,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 await eliminarVacacion(USER_ID, fecha);
             }
 
-            calendar.refetchEvents();  // Refrescar eventos en el calendario
-            await actualizarGraficoVacaciones();  // Actualizar gráfico y contador
+            calendar.refetchEvents();
+            await actualizarGraficoVacaciones();
         },
 
         eventDidMount: function (info) {
@@ -72,9 +71,21 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     calendar.render();
-    actualizarGraficoVacaciones(); // Inicial al cargar
 
-    // Función para actualizar contador + gráfico
+    // Cargar vacaciones del usuario al iniciar
+    cargarVacacionesUsuario();
+
+    async function cargarVacacionesUsuario() {
+        try {
+            const res = await fetch(`http://localhost:5064/api/Vacaciones/usuario/${USER_ID}`);
+            const data = await res.json();
+            selectedDates = data.map(v => v.fecha.split('T')[0]);
+            await actualizarGraficoVacaciones();
+        } catch (error) {
+            console.error("Error al cargar vacaciones del usuario:", error);
+        }
+    }
+
     async function actualizarGraficoVacaciones() {
         try {
             const res = await fetch(`http://localhost:5064/api/Vacaciones/usuario/${USER_ID}`);
@@ -82,7 +93,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const usados = data.length;
             const restantes = 28 - usados;
 
-            // Actualizar texto
             document.getElementById('vacation-counter').textContent =
                 `Te quedan ${restantes} días de vacaciones.`;
 
