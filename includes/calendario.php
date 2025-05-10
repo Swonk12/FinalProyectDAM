@@ -19,6 +19,8 @@ if (isset($_SESSION['user']['id'])) {
     <!-- calendario.php -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../assets/css/calendario.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <h1>CALENDARIO</h1>
@@ -26,6 +28,8 @@ if (isset($_SESSION['user']['id'])) {
         <div id="calendar"></div>
     </div>
     <div id="vacation-counter"></div>
+
+    <canvas id="vacation-chart" width="300" height="300"></canvas>
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
     <script>

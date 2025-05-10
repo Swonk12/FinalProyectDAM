@@ -8,18 +8,27 @@ document.addEventListener('DOMContentLoaded', function () {
         height: 'auto',
         selectable: true,
 
-        select: function (info) {
-            const fecha = info.startStr; // Fecha seleccionada
-            // Si no está en la lista de días seleccionados, se agrega
+        select: async function (info) {
+            const fecha = info.startStr;
+        
             if (!selectedDates.includes(fecha)) {
                 selectedDates.push(fecha);
-                guardarVacacion(USER_ID, fecha);  // Guardar vacación en la base de datos
-            } else { // Si ya está seleccionado, se elimina
+                await guardarVacacion(USER_ID, fecha);  // Esperar a que se guarde
+            } else {
                 selectedDates = selectedDates.filter(d => d !== fecha);
-                eliminarVacacion(USER_ID, fecha);  // Eliminar vacación de la base de datos
+                await eliminarVacacion(USER_ID, fecha);  // Esperar a que se elimine
             }
-            actualizarContador();  // Actualiza el contador de días restantes
-            calendar.refetchEvents();  // Refresca el calendario con los eventos actualizados
+        
+            actualizarContador();
+            calendar.refetchEvents();  // Se ejecuta después de guardar/eliminar
+        },
+
+        eventDidMount: function(info) {
+            // Añadir clase para estilo personalizado
+            info.el.classList.add('evento-vacacion');
+        
+            // Opcional: modificar el contenido para que no sea solo texto plano
+            info.el.innerHTML = `<div class="evento-cuadro" style="background-color:${info.event.backgroundColor}">${info.event.title}</div>`;
         },
 
         events: function(fetchInfo, successCallback, failureCallback) {
@@ -79,42 +88,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function guardarVacacion(userId, fecha) {
-        const fechaSolo = fecha.split('T')[0];  // Esto deja solo la parte de la fecha: "YYYY-MM-DD"
-    
-        // Actualiza la URL para apuntar al puerto correcto (5064 en lugar de 3000)
-        fetch(`http://localhost:5064/api/Vacaciones`, {
+        const fechaSolo = fecha.split('T')[0];
+        return fetch(`http://localhost:5064/api/Vacaciones`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                idUsuario: userId,  // ID del usuario
-                fecha: fechaSolo     // Fecha sin hora
+                idUsuario: userId,
+                fecha: fechaSolo
             })
-        })
-        .then(response => {
-            if (response.ok) {
-                console.log('Vacación agregada con éxito');
-            } else {
-                console.error('Error al agregar la vacación');
-            }
-        })
-        .catch(error => console.error('Error al hacer el POST:', error));
+        });
     }
-
+    
     function eliminarVacacion(userId, fecha) {
-        // Para eliminar, necesitamos enviar la fecha exacta, ya que no estamos trabajando con ID de vacación
-        const fechaSolo = fecha.split('T')[0];  // Solo la fecha (YYYY-MM-DD)
-        
-        fetch(`http://localhost:5064/api/vacaciones?usuario=${userId}&fecha=${fechaSolo}`, {
+        const fechaSolo = fecha.split('T')[0];
+        return fetch(`http://localhost:5064/api/vacaciones?usuario=${userId}&fecha=${fechaSolo}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
-        })
-        .then(response => {
-            if (response.ok) {
-                console.log('Vacación eliminada correctamente');
-            } else {
-                console.error('Error al eliminar la vacación');
-            }
-        })
-        .catch(error => console.error('Error al eliminar la vacación:', error));
+        });
     }
+    
 });

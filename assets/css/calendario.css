@@ -52,3 +52,36 @@
     }
   }
   
+  /* Quita el contador de eventos ("0", "1", etc.) en el día */
+.fc-daygrid-day-number {
+    z-index: 1;
+}
+
+.fc .fc-daygrid-event-harness {
+    z-index: 2;
+}
+
+.fc-daygrid-event-dot {
+    display: none; /* Opcional: si estás usando "dot events" */
+}
+
+/* Estilo base para eventos */
+.evento-vacacion {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    border: none !important;
+}
+
+/* Cuadro de color personalizado */
+.evento-cuadro {
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
