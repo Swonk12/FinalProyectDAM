@@ -24,13 +24,15 @@ if (isset($_SESSION['user']['id'])) {
 </head>
 <body>
     <h1>CALENDARIO</h1>
+
+    <div id="chart-wrapper">
+        <canvas id="vacation-chart" width="120" height="120"></canvas>
+    </div>
+
     <div id="calendar-wrapper">
         <div id="calendar"></div>
     </div>
     <div id="vacation-counter"></div>
-
-    <canvas id="vacation-chart" width="300" height="300"></canvas>
-
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
     <script>
     // Pasamos el ID del usuario correctamente desde PHP a JavaScript

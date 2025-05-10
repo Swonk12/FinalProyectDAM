@@ -85,3 +85,15 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+#chart-wrapper {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+#vacation-chart {
+    max-width: 120px;
+    max-height: 120px;
+}
