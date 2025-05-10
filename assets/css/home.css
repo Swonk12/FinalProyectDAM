@@ -11,13 +11,13 @@ html, body {
     width: 100%;
 }
 
-body {
-    margin: 0;
-    padding: 0;
-    padding-top: 80px;
-    box-sizing: border-box;
-    background-color: #f4f4f4;
+.home-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 80px; /* Esto evita que se tape por el navbar fijo */
 }
+
 
 /* Estilos de la barra de navegación */
 .top-menu {
@@ -83,10 +83,8 @@ body {
 /* Contenedor principal */
 .home-container {
     display: flex;
-    width: 100vw;
-    height: calc(100vh - 80px);
+    width: 100%;
 }
-
 /* Panel izquierdo */
 .left-panel {
     width: 30%;
