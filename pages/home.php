@@ -55,15 +55,21 @@ $titulo = $titulosPorPagina[$page] ?? "Inicio";
         </div>
         <h1 class="menu-title"><?= $titulo ?></h1>
         <div class="menu-right">
-        <?php
-            echo "<p>" . $nombre . " " . $apellido . "</p>"; 
-            if ($rol == "Admin" && $page === "usersList.php"): ?>
-                <button class="btn-create-user-hg45">Nuevo Usuario</button>
+            <?php
+                echo "<p>" . $nombre . " " . $apellido . "</p>"; 
+                if ($rol == "Admin" && $page === "usersList.php"): ?>
+                    <button class="btn-create-user-hg45">Nuevo Usuario</button>
             <?php endif; ?>
             <div class="profile-photo">
                 <img src="../assets/img/Home/Perfil.webp" alt="Perfil">
             </div>
+            <form action="../includes/logout.php" method="post" style="margin-left: 15px;">
+                <button type="submit" class="btn-logout" title="Cerrar sesión">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </form>
         </div>
+
     </nav>
 
     <!-- MAIN -->

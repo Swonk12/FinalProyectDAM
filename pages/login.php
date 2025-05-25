@@ -10,6 +10,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+    <!-- Fondo animado -->
+    <div class="animated-bg"></div>
+    <div class="animated-bg"></div>
+    <div class="animated-bg"></div>
+
     <div class="login-container">
         <form action="login.php" method="post" class="login-form">
             <div class="logo-container">

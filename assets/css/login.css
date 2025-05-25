@@ -4,13 +4,22 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url("../img/Login/fondo.webp");
+  /* background-image: url("../img/Login/fondo.webp"); */
   background-size: cover;
   background-position: center; 
   background-repeat: no-repeat; 
   margin: 0;
   font-family: Arial, sans-serif;
 }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
 
 .login-container {
   background-color: white;
@@ -90,4 +99,70 @@ body {
   .login-container {
       padding: 1.5rem;
   }
+}
+
+/* Importa la fuente */
+@import url('https://fonts.googleapis.com/css?family=Montserrat:700');
+
+/* Fondo animado */
+.animated-bg {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  opacity: 0.25;
+  z-index: 0;
+  background-color: #ff00ff; /* o #ffffff, etc. */
+  animation: hue 10s linear infinite, move1 19s linear infinite;
+  transform: scale(45); /* reemplaza el box-shadow gigante */
+}
+
+.animated-bg:nth-child(1) {
+  box-shadow: 0 0 45vmax 45vmax #ff00ff;
+  animation: hue 10s linear infinite, move1 19s linear infinite;
+}
+.animated-bg:nth-child(2) {
+  box-shadow: 0 0 45vmax 45vmax #ffffff;
+  animation: hue 15s linear infinite, move2 25s linear infinite;
+}
+.animated-bg:nth-child(3) {
+  box-shadow: 0 0 45vmax 45vmax #00ffff;
+  animation: hue 20s linear infinite, move3 15s linear infinite;
+  opacity: 0.2;
+}
+
+/* Animaciones */
+@keyframes hue {
+  0%   { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes move1 {
+  0%   { top: 0vh; left: 50vw; }
+  25%  { left: 0vw; }
+  50%  { top: 100vh; }
+  75%  { left: 100vw; }
+  100% { top: 0vh; left: 50vw; }
+}
+
+@keyframes move2 {
+  0%   { top: 50vh; left: 100vw; }
+  25%  { top: 100vh; }
+  50%  { left: 0vw; }
+  75%  { top: 0vh; }
+  100% { top: 50vh; left: 100vw; }
+}
+
+@keyframes move3 {
+  0%   { top: 100vh; left: 50vw; }
+  25%  { left: 100vw; }
+  50%  { top: 0vh; }
+  75%  { left: 0vw; }
+  100% { top: 100vh; left: 50vw; }
+}
+
+/* Asegurar que el login esté por encima del fondo */
+.login-container {
+  position: relative;
+  z-index: 10;
 }

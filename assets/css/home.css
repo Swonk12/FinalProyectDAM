@@ -233,3 +233,20 @@ html, body {
         height: 40px;
     }
 }
+
+.btn-logout {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-logout:hover {
+    background-color: #c82333;
+}
